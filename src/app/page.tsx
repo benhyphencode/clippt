@@ -72,17 +72,30 @@ function BrowseContent() {
   return (
     <div className="flex flex-col h-full min-h-screen">
       {/* Outer container */}
-      <div className="max-w-[1280px] w-full mx-auto border border-border rounded-2xl overflow-hidden flex flex-col flex-1 my-md">
+      <div className="max-w-[1280px] w-full mx-auto border-x-0 md:border border-border md:rounded-2xl overflow-hidden flex flex-col flex-1 md:my-md">
         <Nav onClipClick={() => setSaveOpen(true)} />
 
+        {/* Mobile: horizontal tag strip */}
+        {tagCounts.length > 0 && (
+          <nav aria-label="Filter by tag" className="md:hidden">
+            <TagSidebar
+              tags={tagCounts}
+              activeTag={activeTag}
+              onTagClick={handleTagClick}
+              variant="strip"
+            />
+          </nav>
+        )}
+
         <div className="flex flex-1 min-h-0">
-          {/* Sidebar */}
+          {/* Desktop: vertical sidebar */}
           {tagCounts.length > 0 && (
-            <nav aria-label="Filter by tag">
+            <nav aria-label="Filter by tag" className="hidden md:block">
               <TagSidebar
                 tags={tagCounts}
                 activeTag={activeTag}
                 onTagClick={handleTagClick}
+                variant="sidebar"
               />
             </nav>
           )}
@@ -98,8 +111,8 @@ function BrowseContent() {
 
             {/* Header (default) */}
             {!activeTag && (
-              <div className="px-xl pt-xl pb-md">
-                <h1 className="text-[28px] font-black text-text">
+              <div className="px-md pt-md pb-sm md:px-xl md:pt-xl md:pb-md">
+                <h1 className="text-[22px] md:text-[28px] font-black text-text">
                   Your clippts
                 </h1>
                 <p className="text-[14px] text-text-muted mt-1">
@@ -111,7 +124,7 @@ function BrowseContent() {
 
             {/* Cards grid */}
             {filtered.length > 0 ? (
-              <div className="px-xl pb-xl grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-[14px]">
+              <div className="px-md pb-md md:px-xl md:pb-xl grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-md">
                 {filtered.map((resource) => (
                   <SaveCard
                     key={resource.id}

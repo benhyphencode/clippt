@@ -64,14 +64,14 @@ export default function ResourceDetailPage() {
 
   return (
     <div className="flex flex-col h-full min-h-screen">
-      <div className="max-w-[1280px] w-full mx-auto border border-border rounded-2xl overflow-hidden flex flex-col flex-1 my-md">
+      <div className="max-w-[1280px] w-full mx-auto border-x-0 md:border border-border md:rounded-2xl overflow-hidden flex flex-col flex-1 md:my-md">
         <Nav onClipClick={() => setSaveOpen(true)} />
 
-        <main className="flex-1 pl-[80px] pr-xl py-xl max-w-[680px]">
+        <main className="flex-1 px-md py-md md:pl-[80px] md:pr-xl md:py-xl max-w-[680px]">
           {/* Back link */}
           <Link
             href="/"
-            className="text-[13px] font-semibold text-text-muted hover:text-text transition-colors inline-block mb-lg"
+            className="text-[13px] font-semibold text-text-muted hover:text-text transition-colors inline-block mb-lg rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-coral"
           >
             ← Back to library
           </Link>
@@ -82,7 +82,7 @@ export default function ResourceDetailPage() {
           </p>
 
           {/* Title */}
-          <h1 className="text-[32px] font-black text-text leading-[40px] mb-md">
+          <h1 className="text-[24px] md:text-[32px] font-black text-text leading-tight mb-md">
             {resource.title}
           </h1>
 
@@ -112,7 +112,7 @@ export default function ResourceDetailPage() {
           </p>
 
           {/* Actions */}
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <a
               href={resource.url}
               target="_blank"
@@ -124,13 +124,13 @@ export default function ResourceDetailPage() {
             </a>
             <button
               onClick={() => setEditOpen(true)}
-              className="h-[40px] px-4 rounded-lg border border-border text-[14px] font-medium text-text-secondary hover:bg-surface-alt transition-colors"
+              className="h-[40px] px-4 rounded-lg border border-border text-[14px] font-medium text-text-secondary hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-coral"
             >
               Edit
             </button>
             <button
               onClick={handleDelete}
-              className="h-[40px] px-4 rounded-lg border text-[14px] font-medium transition-colors border-[rgba(229,62,62,0.3)] text-[#E53E3E] hover:bg-[rgba(229,62,62,0.05)]"
+              className="h-[40px] px-4 rounded-lg border text-[14px] font-medium transition-colors border-[rgba(229,62,62,0.3)] text-[#E53E3E] hover:bg-[rgba(229,62,62,0.05)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#E53E3E]"
             >
               Delete
             </button>

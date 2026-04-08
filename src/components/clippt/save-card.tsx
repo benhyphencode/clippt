@@ -11,7 +11,7 @@ interface SaveCardProps {
 
 export function SaveCard({ resource, isNew }: SaveCardProps) {
   return (
-    <Link href={`/resource/${resource.id}`} className="block group/card">
+    <Link href={`/resource/${resource.id}`} className="block group/card rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-coral">
       <article
         className={`
           bg-surface border border-border rounded-xl p-lg

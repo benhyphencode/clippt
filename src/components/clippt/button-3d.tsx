@@ -25,6 +25,8 @@ const Button3D = forwardRef<HTMLButtonElement, Button3DProps>(
           fullWidth && "w-full",
           "hover:-translate-y-[1px]",
           "active:pb-0 active:translate-y-0",
+          "disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0",
+          "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/70",
           className
         )}
         {...props}

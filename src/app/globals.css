@@ -214,6 +214,15 @@
   }
 }
 
+/* ─── Utilities ─────────────────────────── */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
 /* ─── Animations ─────────────────────────── */
 
 /* Card entrance after saving */
@@ -229,7 +238,7 @@
 }
 
 .animate-card-enter {
-  animation: card-enter 400ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation: card-enter 350ms cubic-bezier(0.25, 1, 0.5, 1) both;
 }
 
 /* Tag pill entrance */

@@ -40,7 +40,7 @@ export function ColourBurst({ tag, count, onClear }: ColourBurstProps) {
           </div>
           <button
             onClick={onClear}
-            className="text-[13px] font-semibold px-3 py-1.5 rounded-md transition-colors hover:opacity-80"
+            className="text-[13px] font-semibold px-3 py-1.5 rounded-md transition-colors hover:opacity-80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
             style={{ color: colours.burstHeading }}
           >
             Clear ✕

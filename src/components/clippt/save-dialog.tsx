@@ -200,7 +200,7 @@ export function SaveDialog({ open, onClose, onSaved, editResource }: SaveDialogP
             </h2>
             <button
               onClick={onClose}
-              className="text-[18px] text-text-faint hover:text-text transition-colors"
+              className="text-[18px] text-text-faint hover:text-text transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-coral rounded"
               aria-label="Close dialog"
             >
               ✕
