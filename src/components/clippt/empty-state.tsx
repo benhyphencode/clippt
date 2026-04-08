@@ -33,7 +33,7 @@ export function EmptyState({
   return (
     <div className="flex items-center justify-center py-3xl">
       <div className="border border-dashed border-border-strong rounded-xl p-xl text-center max-w-[360px]">
-        <h3 className="text-[20px] font-bold text-text mb-2">{heading}</h3>
+        <h2 className="text-[20px] font-bold text-text mb-2">{heading}</h2>
         <p className="text-[14px] text-text-muted mb-lg">{body}</p>
         {onCtaClick && (
           <Button3D onClick={onCtaClick}>{cta}</Button3D>

@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { Suspense, useEffect, useState, useCallback } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { type Resource, getResources, getTagCounts, seedIfEmpty } from "@/lib/data";
 import { Nav } from "@/components/clippt/nav";
 import { TagSidebar } from "@/components/clippt/tag-sidebar";
@@ -11,11 +12,37 @@ import { SaveDialog } from "@/components/clippt/save-dialog";
 import { ClipptToast } from "@/components/clippt/clippt-toast";
 
 export default function BrowsePage() {
+  return (
+    <Suspense>
+      <BrowseContent />
+    </Suspense>
+  );
+}
+
+function BrowseContent() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const [resources, setResources] = useState<Resource[]>([]);
-  const [activeTag, setActiveTag] = useState<string | null>(null);
   const [saveOpen, setSaveOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [newResourceId, setNewResourceId] = useState<string | null>(null);
+
+  // Sync activeTag from URL
+  const activeTag = searchParams.get("tag");
+
+  const setActiveTag = useCallback(
+    (tag: string | null) => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (tag) {
+        params.set("tag", tag);
+      } else {
+        params.delete("tag");
+      }
+      const query = params.toString();
+      router.push(query ? `/?${query}` : "/", { scroll: false });
+    },
+    [searchParams, router]
+  );
 
   const refresh = useCallback(() => {
     setResources(getResources());
@@ -32,7 +59,7 @@ export default function BrowsePage() {
     : resources;
 
   const handleTagClick = (tag: string) => {
-    setActiveTag((prev) => (prev === tag ? null : tag));
+    setActiveTag(activeTag === tag ? null : tag);
   };
 
   const handleSaved = (id: string) => {
@@ -51,15 +78,17 @@ export default function BrowsePage() {
         <div className="flex flex-1 min-h-0">
           {/* Sidebar */}
           {tagCounts.length > 0 && (
-            <TagSidebar
-              tags={tagCounts}
-              activeTag={activeTag}
-              onTagClick={handleTagClick}
-            />
+            <nav aria-label="Filter by tag">
+              <TagSidebar
+                tags={tagCounts}
+                activeTag={activeTag}
+                onTagClick={handleTagClick}
+              />
+            </nav>
           )}
 
           {/* Main content */}
-          <main className="flex-1 flex flex-col min-w-0">
+          <main id="main-content" className="flex-1 flex flex-col min-w-0">
             {/* Colour burst */}
             <ColourBurst
               tag={activeTag}

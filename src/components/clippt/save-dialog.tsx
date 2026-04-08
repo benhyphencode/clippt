@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, type KeyboardEvent } from "react";
+import { useState, useRef, useEffect, useCallback, type KeyboardEvent } from "react";
 import { createResource, updateResource, type Resource } from "@/lib/data";
 import { Button3D } from "./button-3d";
 import { TagPill } from "./tag-pill";
@@ -19,22 +19,25 @@ export function SaveDialog({ open, onClose, onSaved, editResource }: SaveDialogP
   const [title, setTitle] = useState("");
   const [titleResolved, setTitleResolved] = useState(false);
   const [titleError, setTitleError] = useState(false);
+  const [titleResolving, setTitleResolving] = useState(false);
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
   const [notes, setNotes] = useState("");
   const [saving, setSaving] = useState(false);
   const urlRef = useRef<HTMLInputElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
 
+  // Track the element that opened the modal for focus restoration
   useEffect(() => {
     if (open) {
+      previousFocusRef.current = document.activeElement as HTMLElement;
       if (editResource) {
-        // Pre-fill form with existing resource data
         setUrl(editResource.url);
         setTitle(editResource.title);
         setTags([...editResource.tags]);
         setNotes(editResource.notes);
       } else {
-        // Reset form for new resource
         setUrl("");
         setTitle("");
         setTags([]);
@@ -42,11 +45,47 @@ export function SaveDialog({ open, onClose, onSaved, editResource }: SaveDialogP
       }
       setTitleResolved(false);
       setTitleError(false);
+      setTitleResolving(false);
       setTagInput("");
       setSaving(false);
       setTimeout(() => urlRef.current?.focus(), 100);
+    } else {
+      // Restore focus when modal closes
+      previousFocusRef.current?.focus();
     }
   }, [open, editResource]);
+
+  // Focus trap — keep Tab cycling within the modal
+  const handleModalKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        onClose();
+        return;
+      }
+
+      if (e.key === "Tab" && modalRef.current) {
+        const focusable = modalRef.current.querySelectorAll<HTMLElement>(
+          'button, [href], input, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+          }
+        } else {
+          if (document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+          }
+        }
+      }
+    },
+    [onClose]
+  );
 
   // Auto-resolve title from URL (only for new resources)
   useEffect(() => {
@@ -54,6 +93,7 @@ export function SaveDialog({ open, onClose, onSaved, editResource }: SaveDialogP
     if (!url) {
       setTitleResolved(false);
       setTitleError(false);
+      setTitleResolving(false);
       return;
     }
     try {
@@ -62,6 +102,7 @@ export function SaveDialog({ open, onClose, onSaved, editResource }: SaveDialogP
       return;
     }
 
+    setTitleResolving(true);
     const controller = new AbortController();
     const timer = setTimeout(async () => {
       try {
@@ -82,12 +123,15 @@ export function SaveDialog({ open, onClose, onSaved, editResource }: SaveDialogP
         }
       } catch {
         // Aborted or failed — ignore
+      } finally {
+        setTitleResolving(false);
       }
     }, 600);
 
     return () => {
       clearTimeout(timer);
       controller.abort();
+      setTitleResolving(false);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [url, isEdit]);
@@ -136,20 +180,28 @@ export function SaveDialog({ open, onClose, onSaved, editResource }: SaveDialogP
       />
 
       {/* Modal */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-md">
+      {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center p-md"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="save-dialog-title"
+        onKeyDown={handleModalKeyDown}
+      >
         <div
+          ref={modalRef}
           className="bg-surface w-full max-w-[480px] rounded-2xl p-xl shadow-2xl border border-border"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
           <div className="flex items-center justify-between mb-lg">
-            <h2 className="text-[22px] font-black text-text">
+            <h2 id="save-dialog-title" className="text-[22px] font-black text-text">
               {isEdit ? "Edit clippt" : "Save to your library"}
             </h2>
             <button
               onClick={onClose}
               className="text-[18px] text-text-faint hover:text-text transition-colors"
-              aria-label="Close"
+              aria-label="Close dialog"
             >
               ✕
             </button>
@@ -159,10 +211,11 @@ export function SaveDialog({ open, onClose, onSaved, editResource }: SaveDialogP
           <div className="flex flex-col gap-md">
             {/* URL */}
             <div>
-              <label className="text-[10px] font-bold tracking-[0.04em] uppercase text-text-faint block mb-1.5">
+              <label htmlFor="save-url" className="text-[10px] font-bold tracking-[0.04em] uppercase text-text-faint block mb-1.5">
                 URL
               </label>
               <input
+                id="save-url"
                 ref={urlRef}
                 type="url"
                 value={url}
@@ -175,9 +228,15 @@ export function SaveDialog({ open, onClose, onSaved, editResource }: SaveDialogP
             {/* Title */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-[10px] font-bold tracking-[0.04em] uppercase text-text-faint">
+                <label htmlFor="save-title" className="text-[10px] font-bold tracking-[0.04em] uppercase text-text-faint">
                   Title
                 </label>
+                {titleResolving && (
+                  <span className="text-[10px] font-medium text-text-faint flex items-center gap-1">
+                    <span className="inline-block w-3 h-3 border border-text-faint border-t-transparent rounded-full animate-spin" />
+                    Resolving…
+                  </span>
+                )}
                 {titleResolved && (
                   <span className="text-[10px] font-medium text-tag-teal-text">
                     ✓ Auto-resolved
@@ -190,6 +249,7 @@ export function SaveDialog({ open, onClose, onSaved, editResource }: SaveDialogP
                 )}
               </div>
               <input
+                id="save-title"
                 type="text"
                 value={title}
                 onChange={(e) => {
@@ -202,7 +262,7 @@ export function SaveDialog({ open, onClose, onSaved, editResource }: SaveDialogP
 
             {/* Tags */}
             <div>
-              <label className="text-[10px] font-bold tracking-[0.04em] uppercase text-text-faint block mb-1.5">
+              <label htmlFor="save-tags" className="text-[10px] font-bold tracking-[0.04em] uppercase text-text-faint block mb-1.5">
                 Tags
               </label>
               <div className="flex flex-wrap items-center gap-1.5 min-h-[40px] px-3 py-1.5 rounded-[10px] bg-surface-alt border border-border focus-within:border-coral focus-within:shadow-[0_0_0_3px_rgba(242,92,58,0.12)] transition-all">
@@ -215,6 +275,7 @@ export function SaveDialog({ open, onClose, onSaved, editResource }: SaveDialogP
                   />
                 ))}
                 <input
+                  id="save-tags"
                   type="text"
                   value={tagInput}
                   onChange={(e) => setTagInput(e.target.value)}
@@ -229,7 +290,7 @@ export function SaveDialog({ open, onClose, onSaved, editResource }: SaveDialogP
             {/* Notes */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-[10px] font-bold tracking-[0.04em] uppercase text-text-faint">
+                <label htmlFor="save-notes" className="text-[10px] font-bold tracking-[0.04em] uppercase text-text-faint">
                   Notes
                 </label>
                 <span className="text-[10px] font-normal text-text-faint">
@@ -237,6 +298,7 @@ export function SaveDialog({ open, onClose, onSaved, editResource }: SaveDialogP
                 </span>
               </div>
               <textarea
+                id="save-notes"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="What makes this worth saving?"

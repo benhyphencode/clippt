@@ -28,9 +28,9 @@ export function SaveCard({ resource, isNew }: SaveCardProps) {
         </p>
 
         {/* Title */}
-        <h3 className="text-[18px] font-bold leading-[24px] text-text mb-2 line-clamp-2">
+        <h2 className="text-[18px] font-bold leading-[24px] text-text mb-2 line-clamp-2">
           {resource.title}
-        </h3>
+        </h2>
 
         {/* Notes */}
         {resource.notes && (
