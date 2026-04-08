@@ -9,6 +9,7 @@ const redHatDisplay = Red_Hat_Display({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://clippt.xyz"),
   title: "clippt — Clip the good stuff",
   description:
     "A personal AI resource library — clip, tag, and browse links to AI tools, articles, and resources.",
@@ -22,13 +23,26 @@ export const metadata: Metadata = {
   },
 };
 
+// Inline script to set dark mode before React hydrates (prevents FOUC)
+const themeScript = `
+(function() {
+  var stored = localStorage.getItem('clippt-theme');
+  if (stored === 'dark' || (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    document.documentElement.classList.add('dark');
+  }
+})();
+`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${redHatDisplay.variable} h-full antialiased`}>
+    <html lang="en" className={`${redHatDisplay.variable} h-full antialiased`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body className="min-h-full flex flex-col font-sans bg-bg text-text">
         {children}
       </body>

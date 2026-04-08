@@ -196,6 +196,18 @@ export function seedIfEmpty(): boolean {
       tags: ["ai-tools", "coding", "ui"],
       notes: "AI-generated UI components. Good for prototyping shadcn/ui layouts.",
     },
+    {
+      url: "https://arxiv.org/abs/2210.03629",
+      title: "ReAct: Synergizing Reasoning and Acting in LLMs",
+      tags: ["articles", "agents", "research"],
+      notes: "The paper that introduced the ReAct prompting pattern. Essential reading for agent design.",
+    },
+    {
+      url: "https://github.com/anthropics/anthropic-cookbook",
+      title: "Anthropic Cookbook",
+      tags: ["anthropic", "coding", "api"],
+      notes: "Practical recipes for building with Claude. Great for tool use patterns and prompt engineering.",
+    },
   ];
 
   for (const seed of seeds) {

@@ -6,19 +6,20 @@ export function ThemeToggle() {
   const [dark, setDark] = useState(false);
 
   useEffect(() => {
-    // Check stored preference or system
-    const stored = localStorage.getItem("clippt-theme");
-    if (stored === "dark" || (!stored && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
-      setDark(true);
-      document.documentElement.classList.add("dark");
-    }
+    // Sync React state with the class already set by the inline script in layout.tsx
+    setDark(document.documentElement.classList.contains("dark"));
   }, []);
 
   const toggle = () => {
     const next = !dark;
     setDark(next);
+    // Enable smooth colour transition, then remove after it completes
+    document.documentElement.classList.add("theme-transition");
     document.documentElement.classList.toggle("dark", next);
     localStorage.setItem("clippt-theme", next ? "dark" : "light");
+    setTimeout(() => {
+      document.documentElement.classList.remove("theme-transition");
+    }, 350);
   };
 
   return (

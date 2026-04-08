@@ -14,6 +14,7 @@ export default function ResourceDetailPage() {
   const router = useRouter();
   const [resource, setResource] = useState<Resource | null>(null);
   const [saveOpen, setSaveOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
 
   useEffect(() => {
     const id = params.id as string;
@@ -122,6 +123,12 @@ export default function ResourceDetailPage() {
               </Button3D>
             </a>
             <button
+              onClick={() => setEditOpen(true)}
+              className="h-[40px] px-4 rounded-lg border border-border text-[14px] font-medium text-text-secondary hover:bg-surface-alt transition-colors"
+            >
+              Edit
+            </button>
+            <button
               onClick={handleDelete}
               className="h-[40px] px-4 rounded-lg border text-[14px] font-medium transition-colors border-[rgba(229,62,62,0.3)] text-[#E53E3E] hover:bg-[rgba(229,62,62,0.05)]"
             >
@@ -138,6 +145,19 @@ export default function ResourceDetailPage() {
         onSaved={() => {
           setSaveOpen(false);
           router.push("/");
+        }}
+      />
+
+      {/* Edit dialog */}
+      <SaveDialog
+        open={editOpen}
+        onClose={() => setEditOpen(false)}
+        editResource={resource}
+        onSaved={(id) => {
+          setEditOpen(false);
+          // Refresh resource data
+          const updated = getResource(id);
+          if (updated) setResource(updated);
         }}
       />
     </div>

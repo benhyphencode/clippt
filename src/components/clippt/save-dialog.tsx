@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, type KeyboardEvent } from "react";
-import { createResource } from "@/lib/data";
+import { createResource, updateResource, type Resource } from "@/lib/data";
 import { Button3D } from "./button-3d";
 import { TagPill } from "./tag-pill";
 
@@ -9,9 +9,12 @@ interface SaveDialogProps {
   open: boolean;
   onClose: () => void;
   onSaved: (id: string) => void;
+  /** Pass an existing resource to enter edit mode */
+  editResource?: Resource | null;
 }
 
-export function SaveDialog({ open, onClose, onSaved }: SaveDialogProps) {
+export function SaveDialog({ open, onClose, onSaved, editResource }: SaveDialogProps) {
+  const isEdit = !!editResource;
   const [url, setUrl] = useState("");
   const [title, setTitle] = useState("");
   const [titleResolved, setTitleResolved] = useState(false);
@@ -24,27 +27,35 @@ export function SaveDialog({ open, onClose, onSaved }: SaveDialogProps) {
 
   useEffect(() => {
     if (open) {
-      // Reset form
-      setUrl("");
-      setTitle("");
+      if (editResource) {
+        // Pre-fill form with existing resource data
+        setUrl(editResource.url);
+        setTitle(editResource.title);
+        setTags([...editResource.tags]);
+        setNotes(editResource.notes);
+      } else {
+        // Reset form for new resource
+        setUrl("");
+        setTitle("");
+        setTags([]);
+        setNotes("");
+      }
       setTitleResolved(false);
       setTitleError(false);
-      setTags([]);
       setTagInput("");
-      setNotes("");
       setSaving(false);
       setTimeout(() => urlRef.current?.focus(), 100);
     }
-  }, [open]);
+  }, [open, editResource]);
 
-  // Auto-resolve title from URL
+  // Auto-resolve title from URL (only for new resources)
   useEffect(() => {
+    if (isEdit) return;
     if (!url) {
       setTitleResolved(false);
       setTitleError(false);
       return;
     }
-    // Only try if it looks like a URL
     try {
       new URL(url);
     } catch {
@@ -79,7 +90,7 @@ export function SaveDialog({ open, onClose, onSaved }: SaveDialogProps) {
       controller.abort();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [url]);
+  }, [url, isEdit]);
 
   const addTag = (value: string) => {
     const t = value.trim().toLowerCase();
@@ -102,8 +113,13 @@ export function SaveDialog({ open, onClose, onSaved }: SaveDialogProps) {
     if (!url || !title) return;
     setSaving(true);
     try {
-      const resource = createResource({ url, title, tags, notes });
-      onSaved(resource.id);
+      if (isEdit && editResource) {
+        updateResource(editResource.id, { url, title, tags, notes });
+        onSaved(editResource.id);
+      } else {
+        const resource = createResource({ url, title, tags, notes });
+        onSaved(resource.id);
+      }
     } catch {
       setSaving(false);
     }
@@ -128,7 +144,7 @@ export function SaveDialog({ open, onClose, onSaved }: SaveDialogProps) {
           {/* Header */}
           <div className="flex items-center justify-between mb-lg">
             <h2 className="text-[22px] font-black text-text">
-              Save to your library
+              {isEdit ? "Edit clippt" : "Save to your library"}
             </h2>
             <button
               onClick={onClose}
@@ -236,7 +252,7 @@ export function SaveDialog({ open, onClose, onSaved }: SaveDialogProps) {
               onClick={handleSave}
               disabled={!url || !title || saving}
             >
-              {saving ? "Saving..." : "Save to library"}
+              {saving ? "Saving..." : isEdit ? "Update clippt" : "Save to library"}
             </Button3D>
           </div>
         </div>
