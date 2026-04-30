@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { createServerClient } from "@/lib/supabase/server";
+import { getCurrentUser } from "@/lib/auth";
 import { getUrlByShortId } from "@/lib/url-id";
 import {
   getChorusForUrl,
@@ -8,7 +9,7 @@ import {
   getUrlSaveCount,
   getRelatedSaves,
 } from "@/lib/queries";
-import { SaveCardV2 } from "@/components/clippt/save-card-v2";
+import { EditableSaveCard } from "@/components/clippt/editable-save-card";
 import { TagCloud } from "@/components/clippt/tag-cloud";
 
 interface UrlDetailPageProps {
@@ -18,6 +19,7 @@ interface UrlDetailPageProps {
 export default async function UrlDetailPage({ params }: UrlDetailPageProps) {
   const { id: shortId } = await params;
   const client = await createServerClient();
+  const currentUser = await getCurrentUser();
 
   // Look up the URL by short ID
   const urlRecord = await getUrlByShortId(client, shortId);
@@ -82,9 +84,10 @@ export default async function UrlDetailPage({ params }: UrlDetailPageProps) {
 
           <div className="flex flex-col gap-md">
             {chorus.map((save) => (
-              <SaveCardV2
+              <EditableSaveCard
                 key={save.id}
                 save={save}
+                currentUserId={currentUser.id}
                 hideUrl
               />
             ))}

@@ -10,6 +10,7 @@ import {
   isFollowing,
 } from "@/lib/queries";
 import { SaveCardV2 } from "@/components/clippt/save-card-v2";
+import { EditableSaveCard } from "@/components/clippt/editable-save-card";
 import { TagCloud } from "@/components/clippt/tag-cloud";
 import { UserByline } from "@/components/clippt/user-byline";
 import { FollowButton } from "@/components/clippt/follow-button";
@@ -103,13 +104,22 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
 
           {saves.length > 0 ? (
             <div className="flex flex-col gap-md">
-              {saves.map((save) => (
-                <SaveCardV2
-                  key={save.id}
-                  save={save}
-                  hideUser
-                />
-              ))}
+              {saves.map((save) =>
+                isOwnProfile ? (
+                  <EditableSaveCard
+                    key={save.id}
+                    save={save}
+                    currentUserId={currentUser.id}
+                    hideUser
+                  />
+                ) : (
+                  <SaveCardV2
+                    key={save.id}
+                    save={save}
+                    hideUser
+                  />
+                )
+              )}
             </div>
           ) : (
             <div className="border border-dashed border-border-strong rounded-xl p-xl text-center">

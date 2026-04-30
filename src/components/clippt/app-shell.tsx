@@ -16,6 +16,7 @@ export function AppShell({ currentUser, children }: AppShellProps) {
     <>
       <NavV2
         currentUser={{
+          id: currentUser.id,
           handle: currentUser.handle,
           display_name: currentUser.display_name,
           avatar_url: currentUser.avatar_url,
