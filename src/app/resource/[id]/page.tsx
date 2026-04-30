@@ -124,13 +124,13 @@ export default function ResourceDetailPage() {
             </a>
             <button
               onClick={() => setEditOpen(true)}
-              className="h-[40px] px-4 rounded-lg border border-border text-[14px] font-medium text-text-secondary hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-coral"
+              className="h-[40px] px-4 rounded-lg border border-border dark:border-border-strong text-[14px] font-medium text-text-secondary dark:text-text dark:bg-surface-alt hover:bg-surface-alt dark:hover:bg-[rgba(255,255,255,0.12)] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-coral"
             >
               Edit
             </button>
             <button
               onClick={handleDelete}
-              className="h-[40px] px-4 rounded-lg border text-[14px] font-medium transition-colors border-[rgba(229,62,62,0.3)] text-[#E53E3E] hover:bg-[rgba(229,62,62,0.05)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#E53E3E]"
+              className="h-[40px] px-4 rounded-lg border text-[14px] font-medium transition-colors border-[rgba(229,62,62,0.3)] dark:border-[rgba(229,62,62,0.4)] text-[#E53E3E] dark:text-[#F87171] hover:bg-[rgba(229,62,62,0.05)] dark:hover:bg-[rgba(229,62,62,0.12)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#E53E3E]"
             >
               Delete
             </button>
