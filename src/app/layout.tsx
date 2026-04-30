@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Red_Hat_Display } from "next/font/google";
 import "./globals.css";
+import { getCurrentUser } from "@/lib/auth";
+import { AppShell } from "@/components/clippt/app-shell";
+import { UserProvider } from "@/components/providers/user-provider";
 
 const redHatDisplay = Red_Hat_Display({
   variable: "--font-red-hat",
@@ -10,13 +13,13 @@ const redHatDisplay = Red_Hat_Display({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://clippt.xyz"),
-  title: "clippt — Clip the good stuff",
+  title: "clippt — Skill library",
   description:
-    "A personal AI resource library — clip, tag, and browse links to AI tools, articles, and resources.",
+    "A social skill-sharing library — save, tag, and discover AI skills and resources with your network.",
   openGraph: {
-    title: "Ben Rowe's clippts",
+    title: "clippt — Skill library",
     description:
-      "A personal AI resource library — clip, tag, and browse links to AI tools, articles, and resources.",
+      "A social skill-sharing library — save, tag, and discover AI skills and resources with your network.",
     url: "https://clippt.xyz",
     siteName: "clippt",
     type: "website",
@@ -33,11 +36,13 @@ const themeScript = `
 })();
 `;
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const currentUser = await getCurrentUser();
+
   return (
     <html lang="en" className={`${redHatDisplay.variable} h-full antialiased`} suppressHydrationWarning>
       <head>
@@ -50,7 +55,11 @@ export default function RootLayout({
         >
           Skip to main content
         </a>
-        {children}
+        <UserProvider user={currentUser}>
+          <AppShell currentUser={currentUser}>
+            {children}
+          </AppShell>
+        </UserProvider>
       </body>
     </html>
   );
