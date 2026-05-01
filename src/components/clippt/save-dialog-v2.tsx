@@ -38,6 +38,7 @@ export function SaveDialogV2({
   const [ogImage, setOgImage] = useState<string | null>(null);
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
+  const [suggestedTags, setSuggestedTags] = useState<string[]>([]);
   const [notes, setNotes] = useState("");
   const [saving, setSaving] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
@@ -135,6 +136,18 @@ export function SaveDialogV2({
           }
           if (data.ogImage) {
             setOgImage(data.ogImage);
+          }
+          // Fetch tag suggestions after title resolves
+          if (data.title) {
+            fetch("/api/suggest-tags", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ url, title: data.title }),
+              signal: controller.signal,
+            })
+              .then((r) => r.ok ? r.json() : { tags: [] })
+              .then((d) => setSuggestedTags(d.tags ?? []))
+              .catch(() => {});
           }
         } else {
           setTitleError(true);
@@ -345,6 +358,28 @@ export function SaveDialogV2({
                   className="flex-1 min-w-[80px] h-[28px] bg-transparent text-[14px] text-text outline-none placeholder:text-text-faint"
                 />
               </div>
+
+              {/* Suggested tags */}
+              {suggestedTags.length > 0 && (
+                <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
+                  <span className="text-[10px] text-text-faint mr-0.5">Suggested:</span>
+                  {suggestedTags
+                    .filter((t) => !tags.includes(t))
+                    .map((tag) => (
+                      <button
+                        key={tag}
+                        type="button"
+                        onClick={() => {
+                          addTag(tag);
+                          setSuggestedTags(suggestedTags.filter((t) => t !== tag));
+                        }}
+                        className="text-[11px] font-medium px-2 py-0.5 rounded-full border border-dashed border-border-strong text-text-muted hover:border-coral hover:text-coral transition-colors"
+                      >
+                        + {tag}
+                      </button>
+                    ))}
+                </div>
+              )}
             </div>
 
             {/* Notes */}
