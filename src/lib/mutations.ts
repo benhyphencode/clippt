@@ -21,6 +21,8 @@ export interface CreateSaveInput {
   title?: string;
   /** Pre-resolved description for the URL */
   description?: string;
+  /** Pre-resolved og:image URL */
+  ogImage?: string;
 }
 
 /**
@@ -36,6 +38,7 @@ export async function createSave(
   const urlRecord = await getOrCreateUrl(client, input.url, {
     title: input.title,
     description: input.description,
+    ogImage: input.ogImage,
   });
 
   // Create the save

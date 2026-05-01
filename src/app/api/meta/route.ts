@@ -44,7 +44,22 @@ export async function GET(request: NextRequest) {
     );
     const description = descMatch?.[1]?.trim() ?? null;
 
-    return NextResponse.json({ title, description });
+    // Extract og:image
+    const ogImageMatch =
+      html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i) ??
+      html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i);
+    let ogImage = ogImageMatch?.[1]?.trim() ?? null;
+
+    // Resolve relative og:image URLs
+    if (ogImage && !ogImage.startsWith("http")) {
+      try {
+        ogImage = new URL(ogImage, url).href;
+      } catch {
+        ogImage = null;
+      }
+    }
+
+    return NextResponse.json({ title, description, ogImage });
   } catch {
     return NextResponse.json(
       { error: "Failed to fetch URL metadata" },

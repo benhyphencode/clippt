@@ -35,6 +35,7 @@ export function SaveDialogV2({
   const [titleResolved, setTitleResolved] = useState(false);
   const [titleError, setTitleError] = useState(false);
   const [titleResolving, setTitleResolving] = useState(false);
+  const [ogImage, setOgImage] = useState<string | null>(null);
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
   const [notes, setNotes] = useState("");
@@ -132,6 +133,9 @@ export function SaveDialogV2({
             setTitleResolved(true);
             setTitleError(false);
           }
+          if (data.ogImage) {
+            setOgImage(data.ogImage);
+          }
         } else {
           setTitleError(true);
           setTitleResolved(false);
@@ -185,6 +189,7 @@ export function SaveDialogV2({
           notes,
           tags,
           title,
+          ogImage: ogImage ?? undefined,
         });
         onClose();
         router.push(`/url/${saved.url.short_id}`);

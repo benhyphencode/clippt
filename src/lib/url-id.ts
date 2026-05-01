@@ -85,7 +85,7 @@ import type { Database } from "./supabase/types";
 export async function getOrCreateUrl(
   client: SupabaseClient<Database>,
   url: string,
-  meta?: { title?: string; description?: string }
+  meta?: { title?: string; description?: string; ogImage?: string }
 ): Promise<Url> {
   // Check if URL already exists
   const { data: existing } = await client
@@ -107,6 +107,7 @@ export async function getOrCreateUrl(
         url,
         title: meta?.title ?? null,
         description: meta?.description ?? null,
+        og_image_url: meta?.ogImage ?? null,
       })
       .select("*")
       .single();

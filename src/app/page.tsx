@@ -93,7 +93,17 @@ export default async function HomePage() {
                 href={`/url/${url.short_id}`}
                 className="block group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-coral rounded-xl"
               >
-                <article className="bg-surface border border-border rounded-xl p-lg transition-all duration-150 ease-out hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[4px_4px_0_rgba(0,0,0,0.08)] dark:hover:shadow-[4px_4px_0_rgba(255,255,255,0.05)]">
+                <article className="bg-surface border border-border rounded-xl overflow-hidden transition-all duration-150 ease-out hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[4px_4px_0_rgba(0,0,0,0.08)] dark:hover:shadow-[4px_4px_0_rgba(255,255,255,0.05)]">
+                  {url.og_image_url && (
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img
+                      src={url.og_image_url}
+                      alt=""
+                      className="w-full h-[120px] object-cover"
+                      loading="lazy"
+                    />
+                  )}
+                  <div className="p-lg">
                   <p className="text-[12px] text-text-faint mb-0.5 truncate">
                     {extractDomain(url.url)}
                   </p>
@@ -115,6 +125,7 @@ export default async function HomePage() {
                     <span className="text-[12px] text-text-muted font-medium">
                       {saveCount} save{saveCount !== 1 ? "s" : ""}
                     </span>
+                  </div>
                   </div>
                 </article>
               </Link>

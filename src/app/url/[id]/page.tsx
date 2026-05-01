@@ -61,6 +61,18 @@ export default async function UrlDetailPage({ params }: UrlDetailPageProps) {
     <div className="max-w-[960px] mx-auto">
       {/* ── URL Hero ──────────────────────────── */}
       <section className="mb-xl pb-xl border-b border-border">
+        {urlRecord.og_image_url && (
+          <div className="mb-4 rounded-xl overflow-hidden border border-border bg-surface-alt">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={urlRecord.og_image_url}
+              alt=""
+              className="w-full h-auto max-h-[300px] object-cover"
+              loading="lazy"
+            />
+          </div>
+        )}
+
         <p className="text-[13px] text-text-faint mb-1">{domain}</p>
 
         <h1 className="text-[24px] sm:text-[28px] font-black text-text mb-3 leading-tight">
