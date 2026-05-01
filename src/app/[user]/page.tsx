@@ -10,8 +10,7 @@ import {
   getUserSaveCount,
   isFollowing,
 } from "@/lib/queries";
-import { SaveCardV2 } from "@/components/clippt/save-card-v2";
-import { EditableSaveCard } from "@/components/clippt/editable-save-card";
+import { LoadMoreSaves } from "@/components/clippt/load-more-saves";
 import { TagCloud } from "@/components/clippt/tag-cloud";
 import { UserByline } from "@/components/clippt/user-byline";
 import { FollowButton } from "@/components/clippt/follow-button";
@@ -57,7 +56,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   // Parallel data fetches
   const [saves, tagCounts, followCounts, saveCount, followingState] =
     await Promise.all([
-      getSaves(client, { userId: profileUser.id }),
+      getSaves(client, { userId: profileUser.id, limit: 20 }),
       getTagCounts(client, profileUser.id),
       getFollowCounts(client, profileUser.id),
       getUserSaveCount(client, profileUser.id),
@@ -127,24 +126,14 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
           </h2>
 
           {saves.length > 0 ? (
-            <div className="flex flex-col gap-md">
-              {saves.map((save) =>
-                isOwnProfile ? (
-                  <EditableSaveCard
-                    key={save.id}
-                    save={save}
-                    currentUserId={currentUser.id}
-                    hideUser
-                  />
-                ) : (
-                  <SaveCardV2
-                    key={save.id}
-                    save={save}
-                    hideUser
-                  />
-                )
-              )}
-            </div>
+            <LoadMoreSaves
+              initialSaves={saves}
+              totalCount={saveCount}
+              filters={{ userId: profileUser.id }}
+              currentUserId={currentUser.id}
+              editable={isOwnProfile}
+              hideUser
+            />
           ) : (
             <div className="border border-dashed border-border-strong rounded-xl p-xl text-center">
               <p className="text-[15px] text-text-muted">

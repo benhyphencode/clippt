@@ -11,7 +11,7 @@ import {
   getRelatedTags,
   isFollowingTag,
 } from "@/lib/queries";
-import { SaveCardV2 } from "@/components/clippt/save-card-v2";
+import { LoadMoreSaves } from "@/components/clippt/load-more-saves";
 import { UserByline } from "@/components/clippt/user-byline";
 import { TagCloud } from "@/components/clippt/tag-cloud";
 import { TagFollowButton } from "@/components/clippt/tag-follow-button";
@@ -53,7 +53,7 @@ export default async function TagPage({ params }: TagPageProps) {
   // Parallel data fetches
   const [saves, saveCount, saverCount, lastSaveDate, topSavers, relatedTags, following] =
     await Promise.all([
-      getSaves(client, { tag: decodedTag }),
+      getSaves(client, { tag: decodedTag, limit: 20 }),
       getTagSaveCount(client, decodedTag),
       getTagSaverCount(client, decodedTag),
       getTagLastSaveDate(client, decodedTag),
@@ -109,11 +109,11 @@ export default async function TagPage({ params }: TagPageProps) {
         {/* Saves list */}
         <div className="flex-1 min-w-0">
           {saves.length > 0 ? (
-            <div className="flex flex-col gap-md">
-              {saves.map((save) => (
-                <SaveCardV2 key={save.id} save={save} />
-              ))}
-            </div>
+            <LoadMoreSaves
+              initialSaves={saves}
+              totalCount={saveCount}
+              filters={{ tag: decodedTag }}
+            />
           ) : (
             <div className="border border-dashed border-border-strong rounded-xl p-xl text-center">
               <p className="text-[15px] text-text-muted">
