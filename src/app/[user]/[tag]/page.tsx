@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { createServerClient } from "@/lib/supabase/server";
@@ -8,6 +9,27 @@ import { TagPill } from "@/components/clippt/tag-pill";
 
 interface FilteredProfilePageProps {
   params: Promise<{ user: string; tag: string }>;
+}
+
+export async function generateMetadata({ params }: FilteredProfilePageProps): Promise<Metadata> {
+  const { user: handle, tag: rawTag } = await params;
+  const tag = decodeURIComponent(rawTag);
+  const client = await createServerClient();
+  const profileUser = await getUser(client, handle);
+  if (!profileUser) return { title: "Not found" };
+
+  const saves = await getSaves(client, { userId: profileUser.id, tag });
+  const description = `${saves.length} save${saves.length !== 1 ? "s" : ""} tagged "${tag}" by ${profileUser.display_name}.`;
+
+  return {
+    title: `${profileUser.display_name} × #${tag}`,
+    description,
+    openGraph: {
+      title: `${profileUser.display_name} × #${tag} — clippt`,
+      description,
+      url: `https://clippt.xyz/${handle}/${rawTag}`,
+    },
+  };
 }
 
 /**

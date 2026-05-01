@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { createServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/lib/auth";
@@ -17,6 +18,29 @@ import { FollowButton } from "@/components/clippt/follow-button";
 
 interface ProfilePageProps {
   params: Promise<{ user: string }>;
+}
+
+export async function generateMetadata({ params }: ProfilePageProps): Promise<Metadata> {
+  const { user: handle } = await params;
+  const client = await createServerClient();
+  const profileUser = await getUser(client, handle);
+  if (!profileUser) return { title: "Not found" };
+
+  const saveCount = await getUserSaveCount(client, profileUser.id);
+  const description = [
+    profileUser.identity_line,
+    `${saveCount} save${saveCount !== 1 ? "s" : ""} on clippt.`,
+  ].filter(Boolean).join(" · ");
+
+  return {
+    title: profileUser.display_name,
+    description,
+    openGraph: {
+      title: `${profileUser.display_name} — clippt`,
+      description,
+      url: `https://clippt.xyz/${handle}`,
+    },
+  };
 }
 
 export default async function ProfilePage({ params }: ProfilePageProps) {

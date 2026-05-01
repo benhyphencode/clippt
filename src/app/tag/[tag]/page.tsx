@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { createServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/lib/auth";
@@ -18,6 +19,29 @@ import { TagPill } from "@/components/clippt/tag-pill";
 
 interface TagPageProps {
   params: Promise<{ tag: string }>;
+}
+
+export async function generateMetadata({ params }: TagPageProps): Promise<Metadata> {
+  const { tag } = await params;
+  const decodedTag = decodeURIComponent(tag);
+  const client = await createServerClient();
+
+  const [saveCount, saverCount] = await Promise.all([
+    getTagSaveCount(client, decodedTag),
+    getTagSaverCount(client, decodedTag),
+  ]);
+
+  const description = `${saveCount} save${saveCount !== 1 ? "s" : ""} from ${saverCount} ${saverCount === 1 ? "person" : "people"}.`;
+
+  return {
+    title: `#${decodedTag}`,
+    description,
+    openGraph: {
+      title: `#${decodedTag} — clippt`,
+      description,
+      url: `https://clippt.xyz/tag/${tag}`,
+    },
+  };
 }
 
 export default async function TagPage({ params }: TagPageProps) {

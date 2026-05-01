@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { createServerClient } from "@/lib/supabase/server";
@@ -14,6 +15,27 @@ import { TagCloud } from "@/components/clippt/tag-cloud";
 
 interface UrlDetailPageProps {
   params: Promise<{ id: string }>;
+}
+
+export async function generateMetadata({ params }: UrlDetailPageProps): Promise<Metadata> {
+  const { id: shortId } = await params;
+  const client = await createServerClient();
+  const urlRecord = await getUrlByShortId(client, shortId);
+  if (!urlRecord) return { title: "Not found" };
+
+  const saveCount = await getUrlSaveCount(client, urlRecord.id);
+  const title = urlRecord.title || urlRecord.url;
+  const description = `${saveCount} ${saveCount === 1 ? "person" : "people"} saved this with their own notes.`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title: `${title} — clippt`,
+      description,
+      url: `https://clippt.xyz/url/${shortId}`,
+    },
+  };
 }
 
 export default async function UrlDetailPage({ params }: UrlDetailPageProps) {

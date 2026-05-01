@@ -13,7 +13,10 @@ const redHatDisplay = Red_Hat_Display({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://clippt.xyz"),
-  title: "clippt — Skill library",
+  title: {
+    default: "clippt — Skill library",
+    template: "%s — clippt",
+  },
   description:
     "A social skill-sharing library — save, tag, and discover AI skills and resources with your network.",
   openGraph: {
