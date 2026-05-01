@@ -1,4 +1,5 @@
 import { NavV2 } from "./nav-v2";
+import { DemoBanner } from "./demo-banner";
 import type { User } from "@/lib/supabase/types";
 
 interface AppShellProps {
@@ -7,7 +8,7 @@ interface AppShellProps {
 }
 
 /**
- * v2 app shell — nav bar + main content area.
+ * v2 app shell — nav bar + demo banner + main content area.
  * Wraps all pages with consistent layout.
  * Server Component: receives currentUser from layout.
  */
@@ -22,6 +23,7 @@ export function AppShell({ currentUser, children }: AppShellProps) {
           avatar_url: currentUser.avatar_url,
         }}
       />
+      <DemoBanner />
       <main
         id="main-content"
         className="flex-1 w-full max-w-[1280px] mx-auto px-md sm:px-xl py-lg sm:py-xl"
