@@ -76,15 +76,15 @@ export default async function TagPage({ params }: TagPageProps) {
   return (
     <div className="max-w-[960px] mx-auto">
       {/* ── Tag Hero (bloom under glass) ────────── */}
-      <HeroBloomUnderGlass family={family} className="mb-xl min-h-[210px]">
-        <div className="flex items-end justify-between gap-4 px-7 py-7 min-h-[210px]">
+      <HeroBloomUnderGlass family={family} className="mb-xl min-h-[160px]">
+        <div className="flex items-end justify-between gap-4 px-7 py-6 min-h-[160px]">
           <div>
             <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-ink-3 mb-3">
               Tag
             </p>
             <h1
-              className="font-black text-ink leading-[0.92] tracking-[-0.045em]"
-              style={{ fontSize: "78px" }}
+              className="font-bold text-ink leading-[0.95] tracking-[-0.035em]"
+              style={{ fontSize: "44px" }}
             >
               #{decodedTag}
             </h1>

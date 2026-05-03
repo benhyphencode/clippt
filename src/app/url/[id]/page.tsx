@@ -74,11 +74,11 @@ export default async function UrlDetailPage({ params }: UrlDetailPageProps) {
           </div>
         ) : (
           // v2.1 fallback hero — bloom-under-glass in coral with domain initials
-          <HeroBloomUnderGlass family="coral" className="mb-4 min-h-[210px]">
-            <div className="flex items-center justify-center px-7 py-7 min-h-[210px]">
+          <HeroBloomUnderGlass family="coral" className="mb-4 min-h-[160px]">
+            <div className="flex items-center justify-center px-7 py-6 min-h-[160px]">
               <span
-                className="font-black text-ink leading-[0.92] tracking-[-0.045em]"
-                style={{ fontSize: "78px" }}
+                className="font-bold text-ink leading-[0.95] tracking-[-0.035em]"
+                style={{ fontSize: "44px" }}
               >
                 {domainInitials(urlRecord.url)}
               </span>
