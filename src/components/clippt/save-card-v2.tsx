@@ -32,7 +32,15 @@ export function SaveCardV2({
   return (
     <article
       className={cn(
-        "py-lg border-b border-line last:border-b-0",
+        "group/card relative -mx-lg px-lg py-lg rounded-[16px]",
+        "border-b border-line last:border-b-0 hover:border-b-transparent",
+        "transition-[background-color,box-shadow] duration-300 ease-out",
+        // Bloom-from-right on hover — coloured light, not coloured paint
+        "hover:bg-[radial-gradient(ellipse_500px_220px_at_94%_50%,rgba(242,92,58,0.10),transparent_72%),linear-gradient(0deg,var(--surface-alt),var(--surface-alt))]",
+        "dark:hover:bg-[radial-gradient(ellipse_500px_220px_at_94%_50%,rgba(242,92,58,0.16),transparent_72%),linear-gradient(0deg,var(--surface-alt),var(--surface-alt))]",
+        // Soft inset glow rim
+        "hover:shadow-[inset_0_0_0_1px_rgba(242,92,58,0.18),inset_0_0_24px_rgba(242,92,58,0.04)]",
+        "dark:hover:shadow-[inset_0_0_0_1px_rgba(242,92,58,0.24),inset_0_0_28px_rgba(242,92,58,0.08)]",
         isNew && "animate-card-enter",
         className
       )}
