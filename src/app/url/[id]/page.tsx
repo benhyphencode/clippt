@@ -131,7 +131,7 @@ export default async function UrlDetailPage({ params }: UrlDetailPageProps) {
             this with their own notes
           </p>
 
-          <div className="flex flex-col gap-md">
+          <div className="flex flex-col">
             {chorus.map((save) => (
               <EditableSaveCard
                 key={save.id}

@@ -103,7 +103,7 @@ export default async function FilteredProfilePage({
 
       {/* ── Saves ─────────────────────────── */}
       {saves.length > 0 ? (
-        <div className="flex flex-col gap-md">
+        <div className="flex flex-col">
           {saves.map((save) => (
             <SaveCardV2 key={save.id} save={save} hideUser />
           ))}

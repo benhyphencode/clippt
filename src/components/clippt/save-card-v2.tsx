@@ -32,11 +32,7 @@ export function SaveCardV2({
   return (
     <article
       className={cn(
-        "bg-surface border border-line rounded-[16px] p-lg",
-        "transition-all duration-200 ease-out",
-        "hover:-translate-y-[2px]",
-        "hover:shadow-[0_6px_20px_rgba(0,0,0,0.08)]",
-        "dark:hover:shadow-[0_6px_20px_rgba(0,0,0,0.18)]",
+        "py-lg border-b border-line last:border-b-0",
         isNew && "animate-card-enter",
         className
       )}

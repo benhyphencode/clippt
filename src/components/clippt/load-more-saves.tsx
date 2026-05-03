@@ -62,7 +62,7 @@ export function LoadMoreSaves({
 
   return (
     <>
-      <div className="flex flex-col gap-md">
+      <div className="flex flex-col">
         {saves.map((save) =>
           editable && currentUserId ? (
             <EditableSaveCard
