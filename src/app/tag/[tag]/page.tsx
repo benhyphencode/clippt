@@ -15,7 +15,8 @@ import { LoadMoreSaves } from "@/components/clippt/load-more-saves";
 import { UserByline } from "@/components/clippt/user-byline";
 import { TagCloud } from "@/components/clippt/tag-cloud";
 import { TagFollowButton } from "@/components/clippt/tag-follow-button";
-import { TagPill } from "@/components/clippt/tag-pill";
+import { HeroBloomUnderGlass } from "@/components/clippt/hero-bloom-under-glass";
+import { getTagCategory } from "@/lib/tag-colours";
 
 interface TagPageProps {
   params: Promise<{ tag: string }>;
@@ -70,28 +71,40 @@ export default async function TagPage({ params }: TagPageProps) {
       })
     : null;
 
+  const family = getTagCategory(decodedTag);
+
   return (
     <div className="max-w-[960px] mx-auto">
-      {/* ── Tag Hero ──────────────────────────── */}
-      <section className="mb-xl pb-xl border-b border-border">
-        <div className="flex items-start justify-between gap-4">
+      {/* ── Tag Hero (bloom under glass) ────────── */}
+      <HeroBloomUnderGlass family={family} className="mb-xl min-h-[210px]">
+        <div className="flex items-end justify-between gap-4 px-7 py-7 min-h-[210px]">
           <div>
-            <div className="mb-2">
-              <TagPill tag={decodedTag} size="lg" />
-            </div>
-            <div className="flex items-center gap-4 text-[13px] mt-3">
-              <span className="text-text-secondary">
-                <span className="font-semibold text-text">{saveCount}</span>{" "}
-                save{saveCount !== 1 ? "s" : ""}
+            <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-ink-3 mb-3">
+              Tag
+            </p>
+            <h1
+              className="font-black text-ink leading-[0.92] tracking-[-0.045em]"
+              style={{ fontSize: "78px" }}
+            >
+              #{decodedTag}
+            </h1>
+            <div className="flex items-center gap-4 text-[13px] mt-4">
+              <span className="text-ink-2">
+                <span className="font-semibold text-ink">{saveCount}</span>{" "}
+                clippt{saveCount !== 1 ? "s" : ""}
               </span>
-              <span className="text-text-secondary">
-                <span className="font-semibold text-text">{saverCount}</span>{" "}
+              <span className="text-ink-3">·</span>
+              <span className="text-ink-2">
+                <span className="font-semibold text-ink">{saverCount}</span>{" "}
                 saver{saverCount !== 1 ? "s" : ""}
               </span>
               {lastSaveFormatted && (
-                <span className="text-text-faint">
-                  Last saved {lastSaveFormatted}
-                </span>
+                <>
+                  <span className="text-ink-3">·</span>
+                  <span className="text-ink-3">
+                    last save {lastSaveFormatted}
+                  </span>
+                </>
               )}
             </div>
           </div>
@@ -102,7 +115,7 @@ export default async function TagPage({ params }: TagPageProps) {
             initialIsFollowing={following}
           />
         </div>
-      </section>
+      </HeroBloomUnderGlass>
 
       {/* ── Main: saves + sidebar ─────────── */}
       <div className="flex flex-col lg:flex-row gap-xl">

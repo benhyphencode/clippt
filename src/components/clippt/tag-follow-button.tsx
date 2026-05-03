@@ -1,25 +1,23 @@
 "use client";
 
 import { useTagFollowState } from "@/lib/hooks/use-tag-follow-state";
-import { cn } from "@/lib/utils";
+import { Button } from "./button";
 
 interface TagFollowButtonProps {
   currentUserId: string;
   tag: string;
   initialIsFollowing: boolean;
-  size?: "sm" | "md";
   className?: string;
 }
 
 /**
- * Follow/Unfollow button for tags. Client component with optimistic updates.
- * Wired to the useTagFollowState hook.
+ * v2.1 Follow/Unfollow button for tags.
+ * Glass+glow primary when not following; soft secondary when following.
  */
 export function TagFollowButton({
   currentUserId,
   tag,
   initialIsFollowing,
-  size = "md",
   className,
 }: TagFollowButtonProps) {
   const { isFollowing, isPending, toggle } = useTagFollowState({
@@ -28,26 +26,14 @@ export function TagFollowButton({
     initialIsFollowing,
   });
 
-  const sizeClasses = {
-    sm: "h-7 px-3 text-[12px]",
-    md: "h-8 px-4 text-[13px]",
-  };
-
   return (
-    <button
+    <Button
       onClick={toggle}
       disabled={isPending}
-      className={cn(
-        "rounded-lg font-semibold transition-all duration-150",
-        sizeClasses[size],
-        isFollowing
-          ? "bg-surface-alt border border-border text-text-secondary hover:border-border-strong hover:text-text"
-          : "bg-coral text-white hover:bg-coral-dark",
-        isPending && "opacity-60",
-        className
-      )}
+      variant={isFollowing ? "secondary" : "primary"}
+      className={className}
     >
-      {isFollowing ? "Following" : "Follow tag"}
-    </button>
+      {isFollowing ? "Following" : "+ Follow this tag"}
+    </Button>
   );
 }

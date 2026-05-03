@@ -12,12 +12,40 @@ Live at: https://clippt.xyz
 
 - **Next.js 16** App Router (Turbopack) with Server Components for data fetching, Client Components for interactivity
 - **Supabase** (local via Docker) — Postgres, RLS, no auth in v2 (demo mode)
-- **Tailwind CSS** with CSS custom properties for theming (light/dark)
-- **Red Hat Display** font, coral accent colour, Web 2.0 raised button aesthetic
+- **Tailwind CSS** with CSS custom properties for theming (light/dark via `data-theme`)
+- **Red Hat Display** font (retained through v2.1 visual reset)
+
+## Visual identity (v2.1 — current)
+
+**"The tag is the place. Colour is the atmosphere."**
+
+Saturated colour as page identity expressed as *coloured light*, not coloured surface. The signature execution is **bloom-under-glass**: a radial gradient of saturated tag colour anchored lower-left of a hero zone, sitting under a translucent surface with `backdrop-filter: blur(28px)`.
+
+- **Hero:** bloom-under-glass (`<HeroBloomUnderGlass>`)
+- **Pills:** liquid glass body with glowing rim (`<TagPill>`)
+- **Primary buttons:** glass body with coral glow (`<Button variant="primary">`)
+- **Secondary/destructive:** soft-elevated (no glass) (`<Button variant="secondary|destructive">`)
+- **Cards:** neutral surface; only pills inside carry tag colour
+- **Mode:** light + dark co-equal, swapped via `data-theme` attribute on `<html>`
+
+**Coral** is both the brand accent (Save, Follow, Clip) and the fallback "no-tag" colour (e.g. `/url/[id]` hero when og:image missing).
+
+**Five tag families** (saturated/soft/dark-text values):
+- Indigo `#5B5CF0` / `#B0B1F8` / `#4546B8`
+- Teal `#18B5A0` / `#6FE0CC` / `#0D7A5F`
+- Coral `#F25C3A` / `#FB9D85` / `#B84A24`
+- Amber `#E59225` / `#F0C078` / `#A06E12` (rebalanced from v2)
+- Rose `#E85B8A` / `#F498B6` / `#B83568`
+
+Tag colour is hash-derived (djb2 → mod 5), deterministic, defined in `src/lib/tag-colours.ts`.
+
+**Retired in v2.1:** `<Button3D>`, hard-offset hover shadows (`box-shadow: 4px 4px 0`), v2 colour-burst CSS, v2 tinted-pill styling.
 
 ## Demo Auth
 
-"You are always Ben Rowe." `getCurrentUser()` in `src/lib/auth.ts` returns a fixed user. This is the single swap point for v3 real auth.
+"You are always Ben Rowe." `getCurrentUser()` in `src/lib/auth.ts` returns a fixed user. Single swap point for v3 real auth.
+
+The demo affordance is a thin `<DemoPill>` in the nav top-right that hover-expands to reveal "clippt v2 demo: real URLs, fictitious users and notes." (CSS-only, no JS state.)
 
 ## Database (5 tables)
 
@@ -32,42 +60,38 @@ Seed: 200 saves, 8 users, 77 URLs (generated from Designer's JSON via `scripts/g
 
 ## 5 Canonical Surfaces
 
-| Route | Page | Key data |
-|-------|------|----------|
-| `/` | Home feed | Network saves, Popular this week, Tags you follow |
-| `/[user]` | Profile | UserByline, stats, saves (paginated), tag cloud sidebar |
-| `/url/[id]` | URL detail | og:image hero, tag taxonomy, chorus (all saves of this URL), related |
-| `/tag/[tag]` | Tag page | Stats, saves (paginated), top savers, related tags |
-| `/[user]/[tag]` | Filtered profile | User's saves for a specific tag |
+| Route | Page | v2.1 hero treatment |
+|-------|------|--------------------|
+| `/` | Home feed | No hero — network bar + Recent + Popular this week |
+| `/[user]` | Profile | UserByline + stats + Tags-you-follow (`Following` eyebrow, hidden when empty) |
+| `/url/[id]` | URL detail | og:image OR coral bloom-under-glass with domain initials at hero scale |
+| `/tag/[tag]` | Tag page | Full bloom-under-glass hero in tag's family colour, `#tag` heading at 78px |
+| `/[user]/[tag]` | Filtered profile | Slim bloom-band with active-tag pill (saturated body, white text), `Clear ✕` |
 
 ## Key Components
 
 | Component | Type | Purpose |
 |-----------|------|---------|
-| `AppShell` | Server | Nav + DemoBanner + main content wrapper |
-| `NavV2` | Client | Logo, theme toggle, + Clip button, profile link |
-| `SaveCardV2` | Server | The feed atom — byline, URL, notes, tags, timestamp |
+| `AppShell` | Server | Nav + main content wrapper |
+| `NavV2` | Client | Logo, search placeholder, DemoPill, ThemeToggle, Clip button, profile link |
+| `DemoPill` | Server | Persistent thin nav pill, CSS hover-expand to full sentence |
+| `ThemeToggle` | Client | Sun/moon toggle, secondary button style, `data-theme` swap |
+| `HeroBloomUnderGlass` | Server | Signature 3-layer hero: bloom → glass → content. `variant="hero"|"band"` |
+| `TagPill` | Client | Liquid glass body + glowing rim. `active` prop for filter pill |
+| `Button` | Client | One component, three variants: primary (glass+glow coral), secondary (soft neutral), destructive (red) |
+| `SaveCardV2` | Server | Feed atom — neutral card, soft-lift hover (no horizontal offset) |
 | `EditableSaveCard` | Client | Wraps SaveCardV2 with hover Edit button for own saves |
 | `SaveDialogV2` | Client | Create/edit/delete saves, title auto-resolve, AI tag suggestions |
 | `LoadMoreSaves` | Client | Paginated save list with "Load more" button |
-| `Button3D` | Client | Signature raised coral/dark CTA button |
-| `TagPill` | Server | Coloured tag pill (5 colour categories) |
-| `TagCloud` / `TagStrip` | Server | Tag layouts with counts and links |
+| `TagCloud` | Server | Frequency-sized pills (5 tiers), `+N more` overflow |
 | `UserByline` | Server | Avatar initials + name + identity line |
-| `FollowButton` | Client | Optimistic follow/unfollow for users |
-| `TagFollowButton` | Client | Optimistic follow/unfollow for tags |
-| `DemoBanner` | Client | Dismissable "Demo mode" explanation for visitors |
+| `FollowButton` / `TagFollowButton` | Client | Optimistic follow toggle; primary button when not following, secondary when following |
 
 ## Data Layer
 
-### Queries (`src/lib/queries.ts`)
-All query functions take `SupabaseClient<Database>` as first arg. Pages compose them via `Promise.all` for parallel fetching. Key functions: `getSaves`, `getRecentFromNetwork`, `getPopularThisWeek`, `getChorusForUrl`, `getUrlTagTaxonomy`, `getTagCounts`, `getFollowCounts`, etc.
-
-### Mutations (`src/lib/mutations.ts`)
-`createSave`, `updateSave`, `deleteSave`, `followUser`, `unfollowUser`, `followTag`, `unfollowTag`.
-
-### Hooks (`src/lib/hooks/`)
-`useFollowState`, `useTagFollowState` — optimistic toggles via `useTransition`.
+- **Queries** (`src/lib/queries.ts`) — server-side, take `SupabaseClient<Database>` first arg
+- **Mutations** (`src/lib/mutations.ts`) — `createSave`, `updateSave`, `deleteSave`, `follow*` / `unfollow*`
+- **Hooks** (`src/lib/hooks/`) — `useFollowState`, `useTagFollowState` (optimistic via `useTransition`)
 
 ## API Routes
 
@@ -75,7 +99,19 @@ All query functions take `SupabaseClient<Database>` as first arg. Pages compose 
 |-------|--------|---------|
 | `/api/meta` | GET | Scrapes title, description, og:image from a URL |
 | `/api/saves` | GET | Paginated save fetching (userId, tag, urlId, offset, limit) |
-| `/api/suggest-tags` | POST | Claude Haiku tag suggestions (requires ANTHROPIC_API_KEY) |
+| `/api/suggest-tags` | POST | Claude Haiku tag suggestions (requires `ANTHROPIC_API_KEY`) |
+
+## CSS Token System
+
+`src/app/globals.css` defines the token system. Mode switching:
+
+- `[data-theme="light"]` (default) and `[data-theme="dark"]` swap CSS custom properties
+- Inline script in `layout.tsx` reads `localStorage['clippt-theme']` (or `prefers-color-scheme`) and sets `data-theme` before stylesheet eval (no FOUC)
+- Tailwind dark variant: `@custom-variant dark (&:is([data-theme="dark"] *))`
+
+**Bloom helpers:** `.bloom-hero` (full hero, ~210px) and `.bloom-band` (slim, ~80px filter band). Take `--bloom-color` as inline style.
+
+**Glass helpers:** `.glass-pill`, `.glass-button` — translucent body with `backdrop-filter`. Both have `@supports not (backdrop-filter)` fallbacks (more opaque body, no blur).
 
 ## Environment Variables
 
@@ -84,13 +120,6 @@ NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<from supabase start>
 ANTHROPIC_API_KEY=<optional, enables AI tag suggestions>
 ```
-
-## Design System
-
-- CSS variables in `globals.css` with `.dark` class swap
-- 5 tag colour categories: coral, teal, gold, purple, slate
-- FOUC prevention: inline script in layout sets .dark before hydration
-- Theme persisted in localStorage as `clippt-theme`
 
 ## Build & Dev
 
@@ -102,5 +131,8 @@ ANTHROPIC_API_KEY=<optional, enables AI tag suggestions>
 ## Linear Project
 
 Project: **clippt** in **Benhyphenrowe** workspace
-Milestones: v2 Foundation (done), v2 Core Pages (done), v2 Interactions (done), v2 Polish (done)
-All tickets BEN-295 through BEN-317 are complete.
+Milestones (all complete): v2 Foundation · v2 Core Pages · v2 Interactions · v2 Polish · **v2.1 Visual refresh + ship-the-gap**
+
+Authoritative spec for v2.1: [Designer-to-Engineer Brief](https://linear.app/benhyphenrowe/document/clippt-v21-designer-to-engineer-brief-visual-refresh-ship-the-gap-02dd3931cada).
+
+v3 (skill-as-anchor) is in the parking lot for strategic exploration. Do not let v3 thinking enter v2.1 implementation.

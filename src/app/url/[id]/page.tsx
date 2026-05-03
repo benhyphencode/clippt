@@ -12,6 +12,7 @@ import {
 } from "@/lib/queries";
 import { EditableSaveCard } from "@/components/clippt/editable-save-card";
 import { TagCloud } from "@/components/clippt/tag-cloud";
+import { HeroBloomUnderGlass } from "@/components/clippt/hero-bloom-under-glass";
 
 interface UrlDetailPageProps {
   params: Promise<{ id: string }>;
@@ -60,9 +61,9 @@ export default async function UrlDetailPage({ params }: UrlDetailPageProps) {
   return (
     <div className="max-w-[960px] mx-auto">
       {/* ── URL Hero ──────────────────────────── */}
-      <section className="mb-xl pb-xl border-b border-border">
-        {urlRecord.og_image_url && (
-          <div className="mb-4 rounded-xl overflow-hidden border border-border bg-surface-alt">
+      <section className="mb-xl pb-xl border-b border-line">
+        {urlRecord.og_image_url ? (
+          <div className="mb-4 rounded-[16px] overflow-hidden border border-line bg-surface-alt">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={urlRecord.og_image_url}
@@ -71,11 +72,25 @@ export default async function UrlDetailPage({ params }: UrlDetailPageProps) {
               loading="lazy"
             />
           </div>
+        ) : (
+          // v2.1 fallback hero — bloom-under-glass in coral with domain initials
+          <HeroBloomUnderGlass family="coral" className="mb-4 min-h-[210px]">
+            <div className="flex items-center justify-center px-7 py-7 min-h-[210px]">
+              <span
+                className="font-black text-ink leading-[0.92] tracking-[-0.045em]"
+                style={{ fontSize: "78px" }}
+              >
+                {domainInitials(urlRecord.url)}
+              </span>
+            </div>
+          </HeroBloomUnderGlass>
         )}
 
-        <p className="text-[13px] text-text-faint mb-1">{domain}</p>
+        <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-ink-3 mb-2">
+          URL · {domain}
+        </p>
 
-        <h1 className="text-[24px] sm:text-[28px] font-black text-text mb-3 leading-tight">
+        <h1 className="text-[24px] sm:text-[28px] font-black text-ink mb-3 leading-tight tracking-[-0.035em]">
           {urlRecord.title || urlRecord.url}
         </h1>
 
@@ -161,6 +176,14 @@ export default async function UrlDetailPage({ params }: UrlDetailPageProps) {
 }
 
 // ─── Helpers ──────────────────────────────────
+
+function domainInitials(url: string): string {
+  const domain = extractDomain(url);
+  const parts = domain.split(".").filter(Boolean);
+  if (parts.length === 0) return "?";
+  // Take first letter of the primary domain (e.g. "github.com" → "G")
+  return parts[0].slice(0, 2).toUpperCase();
+}
 
 function extractDomain(url: string): string {
   try {

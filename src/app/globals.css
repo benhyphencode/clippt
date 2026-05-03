@@ -2,11 +2,12 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-@custom-variant dark (&:is(.dark *));
+/* clippt v2.1 — data-theme drives mode swap */
+@custom-variant dark (&:is([data-theme="dark"] *));
 
 /* ───────────────────────────────────────────
-   clippt — Design Token System
-   Font: Red Hat Display (400–900)
+   clippt v2.1 — Design Token System
+   "The tag is the place. Colour is the atmosphere."
    ─────────────────────────────────────────── */
 
 @theme inline {
@@ -29,176 +30,164 @@
   --radius-xl: 16px;
   --radius-2xl: 20px;
 
-  /* Colours — mapped from CSS vars for light/dark swap */
+  /* Neutrals — mapped from CSS vars for light/dark swap */
   --color-bg: var(--bg);
+  --color-bg-2: var(--bg-2);
   --color-surface: var(--surface);
   --color-surface-alt: var(--surface-alt);
   --color-border: var(--border-color);
   --color-border-strong: var(--border-strong);
-  --color-text: var(--text);
-  --color-text-secondary: var(--text-secondary);
-  --color-text-muted: var(--text-muted);
-  --color-text-faint: var(--text-faint);
+  --color-text: var(--ink);
+  --color-text-secondary: var(--ink-2);
+  --color-text-muted: var(--ink-3);
+  --color-text-faint: var(--ink-3);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-line: var(--line);
 
-  /* Coral accent */
+  /* Coral — primary brand accent + fallback "no-tag" colour */
   --color-coral: #F25C3A;
-  --color-coral-dark: #BF3E1C;
+  --color-coral-saturated: #F25C3A;
+  --color-coral-soft: #FB9D85;
+  --color-coral-dark-text: #B84A24;
+  --color-coral-dark: #B84A24;
   --color-coral-light: var(--coral-light);
   --color-coral-text: var(--coral-text);
 
-  /* Tag: Indigo */
+  /* Tag families — saturated / soft / dark-text */
+  --color-tag-indigo-saturated: #5B5CF0;
+  --color-tag-indigo-soft: #B0B1F8;
+  --color-tag-indigo-dark-text: #4546B8;
+  --color-tag-teal-saturated: #18B5A0;
+  --color-tag-teal-soft: #6FE0CC;
+  --color-tag-teal-dark-text: #0D7A5F;
+  --color-tag-coral-saturated: #F25C3A;
+  --color-tag-coral-soft: #FB9D85;
+  --color-tag-coral-dark-text: #B84A24;
+  --color-tag-amber-saturated: #E59225;
+  --color-tag-amber-soft: #F0C078;
+  --color-tag-amber-dark-text: #A06E12;
+  --color-tag-rose-saturated: #E85B8A;
+  --color-tag-rose-soft: #F498B6;
+  --color-tag-rose-dark-text: #B83568;
+
+  /* Legacy bg/text mappings retained for in-flight components (mapped to new families) */
   --color-tag-indigo-bg: var(--tag-indigo-bg);
   --color-tag-indigo-text: var(--tag-indigo-text);
   --color-tag-indigo-strong: var(--tag-indigo-strong);
-
-  /* Tag: Teal */
   --color-tag-teal-bg: var(--tag-teal-bg);
   --color-tag-teal-text: var(--tag-teal-text);
   --color-tag-teal-strong: var(--tag-teal-strong);
-
-  /* Tag: Coral */
   --color-tag-coral-bg: var(--tag-coral-bg);
   --color-tag-coral-text: var(--tag-coral-text);
   --color-tag-coral-strong: var(--tag-coral-strong);
-
-  /* Tag: Amber */
   --color-tag-amber-bg: var(--tag-amber-bg);
   --color-tag-amber-text: var(--tag-amber-text);
   --color-tag-amber-strong: var(--tag-amber-strong);
-
-  /* Tag: Rose */
   --color-tag-rose-bg: var(--tag-rose-bg);
   --color-tag-rose-text: var(--tag-rose-text);
   --color-tag-rose-strong: var(--tag-rose-strong);
 
-  /* Colour burst headings */
-  --color-burst-indigo-heading: var(--burst-indigo-heading);
-  --color-burst-indigo-muted: var(--burst-indigo-muted);
-  --color-burst-teal-heading: var(--burst-teal-heading);
-  --color-burst-teal-muted: var(--burst-teal-muted);
-  --color-burst-coral-heading: var(--burst-coral-heading);
-  --color-burst-coral-muted: var(--burst-coral-muted);
-  --color-burst-amber-heading: var(--burst-amber-heading);
-  --color-burst-amber-muted: var(--burst-amber-muted);
-  --color-burst-rose-heading: var(--burst-rose-heading);
-  --color-burst-rose-muted: var(--burst-rose-muted);
-
   /* shadcn mappings */
   --color-background: var(--bg);
-  --color-foreground: var(--text);
+  --color-foreground: var(--ink);
   --color-card: var(--surface);
-  --color-card-foreground: var(--text);
+  --color-card-foreground: var(--ink);
   --color-popover: var(--surface);
-  --color-popover-foreground: var(--text);
+  --color-popover-foreground: var(--ink);
   --color-primary: #F25C3A;
   --color-primary-foreground: #FFFFFF;
   --color-secondary: var(--surface-alt);
-  --color-secondary-foreground: var(--text);
+  --color-secondary-foreground: var(--ink);
   --color-muted: var(--surface-alt);
-  --color-muted-foreground: var(--text-muted);
+  --color-muted-foreground: var(--ink-3);
   --color-accent: var(--surface-alt);
-  --color-accent-foreground: var(--text);
-  --color-destructive: #E53E3E;
+  --color-accent-foreground: var(--ink);
+  --color-destructive: #E5484D;
   --color-input: var(--surface-alt);
   --color-ring: #F25C3A;
 }
 
-/* ─── Light Mode ─────────────────────────── */
-:root {
-  --bg: #FFFFFF;
+/* ─── Light Mode (default) ─────────────────── */
+:root,
+[data-theme="light"] {
+  /* Neutrals */
+  --bg: #FAFAFB;
+  --bg-2: #FFFFFF;
   --surface: #FFFFFF;
-  --surface-alt: #F7F7F8;
-  --border-color: rgba(23, 23, 28, 0.15);
-  --border-strong: rgba(23, 23, 28, 0.25);
-  --text: #17171C;
-  --text-secondary: #2C2C35;
-  --text-muted: #6B6B78;
-  --text-faint: #9292A0;
+  --surface-alt: #F4F4F6;
+  --line: #E5E5E9;
+  --border-color: #E5E5E9;
+  --border-strong: rgba(23, 23, 28, 0.18);
+  --ink: #17171C;
+  --ink-2: #3D3D47;
+  --ink-3: #7E7E89;
 
+  /* Glass body fills */
+  --glass-body: rgba(255, 255, 255, 0.65);
+  --glass-body-strong: rgba(255, 255, 255, 0.85);
+
+  /* Coral helpers */
   --coral-light: #FDECE6;
   --coral-text: #B84A24;
 
-  /* Tag colours — light */
-  --tag-indigo-bg: #EAEBFE;
+  /* Pill bg/text — light mode uses dark-text colour over light body */
+  --tag-indigo-bg: rgba(255, 255, 255, 0.65);
   --tag-indigo-text: #4546B8;
-  --tag-indigo-strong: #D8D9FD;
-
-  --tag-teal-bg: #DFF5ED;
+  --tag-indigo-strong: rgba(91, 92, 240, 0.55);
+  --tag-teal-bg: rgba(255, 255, 255, 0.65);
   --tag-teal-text: #0D7A5F;
-  --tag-teal-strong: #C8EDDD;
-
-  --tag-coral-bg: #FDECE6;
+  --tag-teal-strong: rgba(24, 181, 160, 0.55);
+  --tag-coral-bg: rgba(255, 255, 255, 0.65);
   --tag-coral-text: #B84A24;
-  --tag-coral-strong: #FADAD0;
-
-  --tag-amber-bg: #FDF2DA;
+  --tag-coral-strong: rgba(242, 92, 58, 0.55);
+  --tag-amber-bg: rgba(255, 255, 255, 0.65);
   --tag-amber-text: #A06E12;
-  --tag-amber-strong: #FAE4B5;
-
-  --tag-rose-bg: #FCE8F0;
+  --tag-amber-strong: rgba(229, 146, 37, 0.55);
+  --tag-rose-bg: rgba(255, 255, 255, 0.65);
   --tag-rose-text: #B83568;
-  --tag-rose-strong: #F8D0E0;
-
-  /* Burst headings — light */
-  --burst-indigo-heading: #3234A0;
-  --burst-indigo-muted: #6668C8;
-  --burst-teal-heading: #0A6650;
-  --burst-teal-muted: #3D9A7F;
-  --burst-coral-heading: #9E3E1D;
-  --burst-coral-muted: #C4704A;
-  --burst-amber-heading: #8A5D0E;
-  --burst-amber-muted: #B8850F;
-  --burst-rose-heading: #9A2B56;
-  --burst-rose-muted: #C45080;
+  --tag-rose-strong: rgba(232, 91, 138, 0.55);
 }
 
-/* ─── Dark Mode ──────────────────────────── */
-.dark {
-  --bg: #111114;
-  --surface: #1A1A1F;
-  --surface-alt: #222228;
-  --border-color: rgba(255, 255, 255, 0.1);
+/* ─── Dark Mode ─────────────────────────────── */
+[data-theme="dark"] {
+  /* Neutrals */
+  --bg: #0A0B10;
+  --bg-2: #0E0F16;
+  --surface: #14151D;
+  --surface-alt: #1A1A22;
+  --line: #232532;
+  --border-color: #232532;
   --border-strong: rgba(255, 255, 255, 0.18);
-  --text: #F0F0F2;
-  --text-secondary: #D0D0D6;
-  --text-muted: #9292A0;
-  --text-faint: #6B6B78;
+  --ink: #ECEDF2;
+  --ink-2: #A4A6B5;
+  --ink-3: #6B6D7E;
 
-  --coral-light: #3A2018;
-  --coral-text: #F0997B;
+  /* Glass body fills */
+  --glass-body: rgba(10, 11, 16, 0.65);
+  --glass-body-strong: rgba(10, 11, 16, 0.85);
 
-  /* Tag colours — dark */
-  --tag-indigo-bg: #2A2A50;
-  --tag-indigo-text: #A8A9F0;
-  --tag-indigo-strong: #3A3A68;
+  /* Coral helpers */
+  --coral-light: rgba(242, 92, 58, 0.12);
+  --coral-text: #FB9D85;
 
-  --tag-teal-bg: #1A3A30;
-  --tag-teal-text: #7FCFB0;
-  --tag-teal-strong: #244E40;
-
-  --tag-coral-bg: #3A2018;
-  --tag-coral-text: #F0997B;
-  --tag-coral-strong: #4E2A20;
-
-  --tag-amber-bg: #3A2E10;
-  --tag-amber-text: #F0C860;
-  --tag-amber-strong: #4E3E18;
-
-  --tag-rose-bg: #3A1828;
-  --tag-rose-text: #F090B8;
-  --tag-rose-strong: #4E2038;
-
-  /* Burst headings — dark */
-  --burst-indigo-heading: #A8A9F0;
-  --burst-indigo-muted: #7A7BE0;
-  --burst-teal-heading: #7FCFB0;
-  --burst-teal-muted: #50B090;
-  --burst-coral-heading: #F0997B;
-  --burst-coral-muted: #D08060;
-  --burst-amber-heading: #F0C860;
-  --burst-amber-muted: #D0A840;
-  --burst-rose-heading: #F090B8;
-  --burst-rose-muted: #D06898;
+  /* Pill bg/text — dark mode uses soft colour over dark body */
+  --tag-indigo-bg: rgba(10, 11, 16, 0.65);
+  --tag-indigo-text: #B0B1F8;
+  --tag-indigo-strong: rgba(91, 92, 240, 0.55);
+  --tag-teal-bg: rgba(10, 11, 16, 0.65);
+  --tag-teal-text: #6FE0CC;
+  --tag-teal-strong: rgba(24, 181, 160, 0.55);
+  --tag-coral-bg: rgba(10, 11, 16, 0.65);
+  --tag-coral-text: #FB9D85;
+  --tag-coral-strong: rgba(242, 92, 58, 0.55);
+  --tag-amber-bg: rgba(10, 11, 16, 0.65);
+  --tag-amber-text: #F0C078;
+  --tag-amber-strong: rgba(229, 146, 37, 0.55);
+  --tag-rose-bg: rgba(10, 11, 16, 0.65);
+  --tag-rose-text: #F498B6;
+  --tag-rose-strong: rgba(232, 91, 138, 0.55);
 }
 
 /* ─── Base ───────────────────────────────── */
@@ -207,10 +196,109 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-bg text-text;
+    background-color: var(--bg);
+    color: var(--ink);
   }
   html {
     @apply font-sans;
+  }
+}
+
+/* ─── Bloom-under-glass primitives ─────────
+   Hero pattern: 3 layers (bloom → glass → content)
+   Colour set via inline --bloom-color CSS var
+   ───────────────────────────────────────── */
+.bloom-hero {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    radial-gradient(
+      ellipse 540px 290px at 16% 75%,
+      var(--bloom-color, #5B5CF0) 0%,
+      color-mix(in oklab, var(--bloom-color, #5B5CF0) 78%, transparent) 18%,
+      color-mix(in oklab, var(--bloom-color, #5B5CF0) 34%, transparent) 42%,
+      color-mix(in oklab, var(--bloom-color, #5B5CF0) 10%, transparent) 66%,
+      transparent 90%
+    ),
+    var(--bg-2);
+}
+
+.bloom-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--glass-body);
+  backdrop-filter: blur(28px) saturate(140%);
+  -webkit-backdrop-filter: blur(28px) saturate(140%);
+  z-index: 0;
+}
+
+@supports not (backdrop-filter: blur(28px)) {
+  .bloom-hero::before {
+    background: var(--glass-body-strong);
+  }
+}
+
+.bloom-hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Slim variant for /[user]/[tag] filter band */
+.bloom-band {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    radial-gradient(
+      ellipse 380px 180px at 10% 70%,
+      var(--bloom-color, #5B5CF0) 0%,
+      color-mix(in oklab, var(--bloom-color, #5B5CF0) 70%, transparent) 22%,
+      color-mix(in oklab, var(--bloom-color, #5B5CF0) 24%, transparent) 50%,
+      transparent 90%
+    ),
+    var(--bg-2);
+}
+
+.bloom-band::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--glass-body);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  z-index: 0;
+}
+
+@supports not (backdrop-filter: blur(20px)) {
+  .bloom-band::before {
+    background: var(--glass-body-strong);
+  }
+}
+
+.bloom-band > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ─── Glass pill / button primitives ─────── */
+.glass-pill {
+  background: var(--glass-body);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.glass-button {
+  background: var(--glass-body);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+@supports not (backdrop-filter: blur(10px)) {
+  .glass-pill,
+  .glass-button {
+    background: var(--glass-body-strong);
   }
 }
 
@@ -224,35 +312,18 @@
 }
 
 /* ─── Animations ─────────────────────────── */
-
-/* Card entrance after saving */
 @keyframes card-enter {
-  0% {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
+  0% { opacity: 0; transform: scale(0.95); }
+  100% { opacity: 1; transform: scale(1); }
 }
-
 .animate-card-enter {
   animation: card-enter 350ms cubic-bezier(0.25, 1, 0.5, 1) both;
 }
 
-/* Tag pill entrance */
 @keyframes tag-enter {
-  0% {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
+  0% { opacity: 0; transform: scale(0.9); }
+  100% { opacity: 1; transform: scale(1); }
 }
-
 .animate-tag-enter {
   animation: tag-enter 200ms ease-out both;
 }
@@ -265,20 +336,13 @@ html.theme-transition *::after {
   transition: background-color 300ms ease, border-color 300ms ease, color 300ms ease !important;
 }
 
-/* Reduced motion — respect user preference */
 @media (prefers-reduced-motion: reduce) {
-  .animate-card-enter {
-    animation: none;
-  }
-  .animate-tag-enter {
-    animation: none;
-  }
+  .animate-card-enter,
+  .animate-tag-enter { animation: none; }
   html.theme-transition,
   html.theme-transition *,
   html.theme-transition *::before,
-  html.theme-transition *::after {
-    transition: none !important;
-  }
+  html.theme-transition *::after { transition: none !important; }
   * {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;

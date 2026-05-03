@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useCallback, type KeyboardEvent } from "re
 import { useRouter } from "next/navigation";
 import { getSupabaseClient } from "@/lib/supabase/client";
 import { createSave, updateSave, deleteSave } from "@/lib/mutations";
-import { Button3D } from "./button-3d";
+import { Button } from "./button";
 import { TagPill } from "./tag-pill";
 import type { SaveWithDetails } from "@/lib/supabase/types";
 
@@ -406,18 +406,18 @@ export function SaveDialogV2({
             </div>
 
             {/* CTA */}
-            <Button3D
-              variant="coral"
-              fullWidth
+            <Button
+              variant="primary"
               onClick={handleSave}
               disabled={!url || !title || saving}
+              className="w-full"
             >
               {saving
                 ? "Saving..."
                 : isEdit
                   ? "Update save"
                   : "Save to library"}
-            </Button3D>
+            </Button>
 
             {/* Delete (edit mode only) */}
             {isEdit && (

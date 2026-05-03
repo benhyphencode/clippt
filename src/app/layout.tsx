@@ -29,12 +29,20 @@ export const metadata: Metadata = {
   },
 };
 
-// Inline script to set dark mode before React hydrates (prevents FOUC)
+// Inline script to set data-theme before React hydrates (prevents FOUC)
 const themeScript = `
 (function() {
-  var stored = localStorage.getItem('clippt-theme');
-  if (stored === 'dark' || (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-    document.documentElement.classList.add('dark');
+  try {
+    var stored = localStorage.getItem('clippt-theme');
+    var resolved;
+    if (stored === 'light' || stored === 'dark') {
+      resolved = stored;
+    } else {
+      resolved = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    document.documentElement.setAttribute('data-theme', resolved);
+  } catch (e) {
+    document.documentElement.setAttribute('data-theme', 'light');
   }
 })();
 `;

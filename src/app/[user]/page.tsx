@@ -8,8 +8,11 @@ import {
   getTagCounts,
   getFollowCounts,
   getUserSaveCount,
+  getTagFollows,
   isFollowing,
 } from "@/lib/queries";
+import Link from "next/link";
+import { TagPill } from "@/components/clippt/tag-pill";
 import { LoadMoreSaves } from "@/components/clippt/load-more-saves";
 import { TagCloud } from "@/components/clippt/tag-cloud";
 import { UserByline } from "@/components/clippt/user-byline";
@@ -54,7 +57,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   const isOwnProfile = currentUser.id === profileUser.id;
 
   // Parallel data fetches
-  const [saves, tagCounts, followCounts, saveCount, followingState] =
+  const [saves, tagCounts, followCounts, saveCount, followingState, tagFollows] =
     await Promise.all([
       getSaves(client, { userId: profileUser.id, limit: 20 }),
       getTagCounts(client, profileUser.id),
@@ -63,6 +66,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
       isOwnProfile
         ? Promise.resolve(false)
         : isFollowing(client, currentUser.id, profileUser.id),
+      getTagFollows(client, profileUser.id),
     ]);
 
   const joinDate = new Date(profileUser.joined_at).toLocaleDateString(
@@ -115,6 +119,22 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
           </span>
           <span className="text-text-faint">Joined {joinDate}</span>
         </div>
+
+        {/* Tags you follow — third element in identity column, hidden when empty */}
+        {tagFollows.length > 0 && (
+          <div className="mt-5">
+            <p className="text-[10px] font-semibold tracking-[0.18em] uppercase text-ink-3 mb-2">
+              Following
+            </p>
+            <div className="flex flex-wrap gap-1.5">
+              {tagFollows.map((tf) => (
+                <Link key={tf.tag} href={`/tag/${tf.tag}`}>
+                  <TagPill tag={tf.tag} size="sm" />
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
       </section>
 
       {/* ── Main content: saves + sidebar ───── */}

@@ -5,7 +5,8 @@ import Link from "next/link";
 import { Logo } from "./logo";
 import { ThemeToggle } from "./theme-toggle";
 import { UserByline } from "./user-byline";
-import { Button3D } from "./button-3d";
+import { Button } from "./button";
+import { DemoPill } from "./demo-pill";
 import { SaveDialogV2 } from "./save-dialog-v2";
 
 interface NavV2Props {
@@ -18,15 +19,15 @@ interface NavV2Props {
 }
 
 /**
- * v2 top navigation bar.
- * Logo (links home), search placeholder, theme toggle, clip button, profile link.
+ * v2.1 top navigation bar.
+ * Logo, search placeholder, demo pill, theme toggle, Clip button, profile link.
  */
 export function NavV2({ currentUser }: NavV2Props) {
   const [saveOpen, setSaveOpen] = useState(false);
 
   return (
     <>
-      <nav className="h-[56px] flex items-center justify-between px-xl border-b border-border bg-bg/80 backdrop-blur-sm sticky top-0 z-40">
+      <nav className="h-[56px] flex items-center justify-between px-xl border-b border-line bg-bg/80 backdrop-blur-md sticky top-0 z-40">
         <Link
           href="/"
           className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-coral rounded-sm"
@@ -35,8 +36,8 @@ export function NavV2({ currentUser }: NavV2Props) {
         </Link>
 
         <div className="flex items-center gap-3">
-          {/* Search — placeholder for Phase 3 */}
-          <div className="hidden sm:flex items-center gap-2 h-8 px-3 rounded-lg bg-surface-alt border border-border text-text-faint text-[13px] w-[200px] cursor-not-allowed">
+          {/* Search — placeholder */}
+          <div className="hidden sm:flex items-center gap-2 h-9 px-3 rounded-[10px] bg-surface-alt border border-line text-ink-3 text-[13px] w-[200px] cursor-not-allowed">
             <svg
               width="14"
               height="14"
@@ -50,9 +51,11 @@ export function NavV2({ currentUser }: NavV2Props) {
             <span>Search...</span>
           </div>
 
+          <DemoPill />
+
           <ThemeToggle />
 
-          <Button3D onClick={() => setSaveOpen(true)} variant="coral">
+          <Button onClick={() => setSaveOpen(true)} className="h-9 px-4">
             <svg
               width="14"
               height="14"
@@ -60,6 +63,7 @@ export function NavV2({ currentUser }: NavV2Props) {
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
               className="mr-0.5"
+              aria-hidden="true"
             >
               <path
                 d="M7 1v12M1 7h12"
@@ -69,7 +73,7 @@ export function NavV2({ currentUser }: NavV2Props) {
               />
             </svg>
             Clip
-          </Button3D>
+          </Button>
 
           <Link
             href={`/${currentUser.handle}`}
